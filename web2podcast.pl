@@ -6,6 +6,7 @@
 use DateTime;
 use POSIX qw(strftime);
 
+# Configure these
 my $RIP_DIR = '/home/dinomite/tmp/streamRips';
 my $WEB_DIR = '/home/dinomite/public_html/podcasts';
 my $WEB_ROOT = 'http://dinomite.net/~dinomite/podcasts';
@@ -81,7 +82,7 @@ print XMLFILE $xmlOutput;
 close XMLFILE;
 
 # Clean up
-#system( "rm -r $RIP_DIR/*" );
+system( "rm -r $RIP_DIR/*" );
 
 # Make a filesystem-friendly name; lowercase, underscores instead of spaces
 sub downcase {
