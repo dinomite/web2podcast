@@ -1,8 +1,11 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl
 # Drew Stephens <drew@dinomite.net>
 # 2009-3-5
 #
 # Create a podcast from a DI stream rip
+use warnings;
+use strict;
+
 use DateTime;
 use POSIX qw(strftime);
 
@@ -43,7 +46,7 @@ system "mv \"$RIP_DIR/$showFile\" \"$baseDir/$newFile\"";
 
 # Get the size
 my @stats = stat "$baseDir/$newFile";
-$fileSize = $stats[7];
+my $fileSize = $stats[7];
 
 # Human date & ISO8601 date
 my $date = DateTime->now->ymd;
