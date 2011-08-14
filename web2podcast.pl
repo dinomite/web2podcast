@@ -85,7 +85,8 @@ print XMLFILE $xmlOutput;
 close XMLFILE;
 
 # Clean up
-system( "rm -r $RIP_DIR/*" );
+system("rm $RIP_DIR/*.mp3");
+system("rm -r $RIP_DIR/incomplete");
 
 # Make a filesystem-friendly name; lowercase, underscores instead of spaces
 sub downcase {
