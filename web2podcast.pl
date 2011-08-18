@@ -7,6 +7,7 @@ use warnings;
 use strict;
 
 use DateTime;
+use Getopt::Std;
 use POSIX qw(strftime);
 
 # Configure these
@@ -15,17 +16,27 @@ my $WEB_DIR = '/home/dinomite/public_html/podcasts';
 my $WEB_ROOT = 'http://dinomite.net/~dinomite/podcasts';
 
 my $usage =<< "EOT";
-$0 showName
+$0 [hd] showName artist description
     showName - The name of the show (given by StreamRipper)
     artist - The show artist
     description - The description for the XMLfile
+
+    Use -d for debugging output and to not clean up after finishing.
 EOT
 
-die $usage unless (scalar(@ARGV) == 3);
+# Get options
+our ($opt_h, $opt_d);
+getopts('dh');
+
+die $usage if (scalar(@ARGV) != 3 || $opt_h);
+my $debug if ($opt_d);
+
+# Get command line information
 my $showName = $ARGV[0];
 my $description = $ARGV[1];
 my $artist = $ARGV[2];
 
+# Create the names for use in the XML file
 my $joinedName = downcase($showName);
 my $baseDir = "$WEB_DIR/$joinedName";
 my $baseURL = "$WEB_ROOT/$joinedName";
@@ -87,9 +98,11 @@ open XMLFILE, ">$xmlFileLocation";
 print XMLFILE $xmlOutput;
 close XMLFILE;
 
-# Clean up
-system("rm $RIP_DIR/*.mp3");
-system("rm -r $RIP_DIR/incomplete");
+# Clean up (or leave detritus if in debug mode)
+unless ($debug) {
+    system("rm $RIP_DIR/*.mp3");
+    system("rm -r $RIP_DIR/incomplete");
+}
 
 # Make a filesystem-friendly name; lowercase, underscores instead of spaces
 sub downcase {
