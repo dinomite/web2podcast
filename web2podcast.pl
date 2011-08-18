@@ -30,18 +30,21 @@ my $joinedName = downcase($showName);
 my $baseDir = "$WEB_DIR/$joinedName";
 my $baseURL = "$WEB_ROOT/$joinedName";
 
-# Find the show file & move it to the web directory
-my $showFile = `ls $RIP_DIR | grep "$showName"`;
+# Use a loose regex to find the downloaded show file
+my $showFileGrep = $showName;
+$showFileGrep =~ s/[ ]/./g;
+# Move it to the web directory
+my $showFile = `ls $RIP_DIR | grep -i "$showFileGrep"`;
 chomp $showFile;
 # Die if the show isn't there
-die "$showName not found in $RIP_DIR\n" if ($showFile eq '');
+die "$showName ($showFileGrep) not found in $RIP_DIR\n" if ($showFile eq '');
 
 my $newFile = downcase($showFile);
 # Strip the streamripper numbers
 $newFile =~ s/00\d\d_//;
 
 # Move the show MP3 to the web directory
-mkpath($baseDir) unless (-d $baseDir);
+mkdir($baseDir) unless (-d $baseDir);
 system "mv \"$RIP_DIR/$showFile\" \"$baseDir/$newFile\"";
 
 # Get the size
