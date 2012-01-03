@@ -45,9 +45,11 @@ my $baseURL = "$WEB_ROOT/$joinedName";
 my $showFileGrep = $showName;
 $showFileGrep =~ s/[ ]/./g;
 # Move it to the web directory
-my $showFile = `ls $RIP_DIR | grep -i "$showFileGrep"`;
+my $showFileCommand = 'ls $RIP_DIR | grep -i "$showFileGrep" | head -1';
+my $showFile = `$showFileCommand`;
 chomp $showFile;
 # Die if the show isn't there
+print "showFileCommand: $showFileCommand\n" if ($debug);
 die "$showName ($showFileGrep) not found in $RIP_DIR\n" if ($showFile eq '');
 
 my $newFile = downcase($showFile);
@@ -56,7 +58,9 @@ $newFile =~ s/00\d\d_//;
 
 # Move the show MP3 to the web directory
 mkdir($baseDir) unless (-d $baseDir);
-system "mv \"$RIP_DIR/$showFile\" \"$baseDir/$newFile\"";
+my $copyShowFileCommand = "cp \"$RIP_DIR/$showFile\" \"$baseDir/$newFile\"";
+print "copyShowFileCommand: $copyShowFileCommand\n" if ($debug);
+system $copyShowFileCommand;
 
 # Get the size
 my @stats = stat "$baseDir/$newFile";
@@ -100,8 +104,8 @@ close XMLFILE;
 
 # Clean up (or leave detritus if in debug mode)
 unless ($debug) {
-    system("rm $RIP_DIR/*.mp3");
-    system("rm -r $RIP_DIR/incomplete");
+    #system("rm $RIP_DIR/*.mp3");
+    #system("rm -r $RIP_DIR/incomplete");
 }
 
 # Make a filesystem-friendly name; lowercase, underscores instead of spaces
