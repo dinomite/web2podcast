@@ -2,9 +2,7 @@ Use web2podcast.pl alongside StremRipper to rip webcasts and turn them into
 podcasts.  I use a cronjob to make a podcast of Corsten's Countdown:
 
 56 12 * * 3 streamripper http://www.di.fm/mp3/trance.pls --quiet -s -d /home/din
-omite/tmp/streamRips/ -l 7500 -u "MPlayer/2:1.0~rc2-0ubuntu17" && /home/dinomite
-/sandbox/subversion/web2podcast/web2podcast.pl "Corsten's Countdown" "Ferry Cors
-ten" "Ferry Corsten - Corsten's Countdown"
+omite/tmp/streamRips/corstens_countdown -l 7500 -u "MPlayer/2:1.0~rc2-0ubuntu17" && /home/dinomite/sandbox/subversion/web2podcast/web2podcast.pl "Corsten's Countdown" corstens_countdown "Ferry Corsten" "Ferry Corsten - Corsten's Countdown"
 
 StreamRipper records an hour on either side of the time Corstens Countdown runs,
 so that I don't miss shows when daylight savings changes.  After that is done,

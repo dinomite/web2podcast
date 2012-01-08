@@ -18,6 +18,7 @@ my $WEB_ROOT = 'http://dinomite.net/~dinomite/podcasts';
 my $usage =<< "EOT";
 $0 [hd] showName artist description
     showName - The name of the show (given by StreamRipper)
+    ripSubdir - Subdirectory for this show's rips
     artist - The show artist
     description - The description for the XMLfile
 
@@ -28,13 +29,14 @@ EOT
 our ($opt_h, $opt_d);
 getopts('dh');
 
-die $usage if (scalar(@ARGV) != 3 || $opt_h);
+die $usage if (scalar(@ARGV) != 4 || $opt_h);
 my $debug if ($opt_d);
 
 # Get command line information
 my $showName = $ARGV[0];
-my $description = $ARGV[1];
-my $artist = $ARGV[2];
+my $ripSubdir = $ARGV[1];
+my $description = $ARGV[2];
+my $artist = $ARGV[3];
 
 # Create the names for use in the XML file
 my $joinedName = downcase($showName);
@@ -45,10 +47,10 @@ my $baseURL = "$WEB_ROOT/$joinedName";
 my $showFileGrep = $showName;
 $showFileGrep =~ s/[ ]/./g;
 # Move it to the web directory
-my $showFile = `ls $RIP_DIR | grep -i "$showFileGrep"`;
+my $showFile = `ls $RIP_DIR/$ripSubdir | grep -i "$showFileGrep"`;
 chomp $showFile;
 # Die if the show isn't there
-die "$showName ($showFileGrep) not found in $RIP_DIR\n" if ($showFile eq '');
+die "$showName ($showFileGrep) not found in $RIP_DIR/$ripSubdir\n" if ($showFile eq '');
 
 my $newFile = downcase($showFile);
 # Strip the streamripper numbers
@@ -56,7 +58,7 @@ $newFile =~ s/00\d\d_//;
 
 # Move the show MP3 to the web directory
 mkdir($baseDir) unless (-d $baseDir);
-system "mv \"$RIP_DIR/$showFile\" \"$baseDir/$newFile\"";
+system "mv \"$RIP_DIR/$ripSubdir/$showFile\" \"$baseDir/$newFile\"";
 
 # Get the size
 my @stats = stat "$baseDir/$newFile";
@@ -100,8 +102,8 @@ close XMLFILE;
 
 # Clean up (or leave detritus if in debug mode)
 unless ($debug) {
-    system("rm $RIP_DIR/*.mp3");
-    system("rm -r $RIP_DIR/incomplete");
+    system("rm $RIP_DIR/$ripSubdir/*.mp3");
+    system("rm -r $RIP_DIR/$ripSubdir/incomplete");
 }
 
 # Make a filesystem-friendly name; lowercase, underscores instead of spaces
