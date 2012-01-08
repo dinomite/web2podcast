@@ -30,7 +30,9 @@ our ($opt_h, $opt_d);
 getopts('dh');
 
 die $usage if (scalar(@ARGV) != 4 || $opt_h);
-my $debug if ($opt_d);
+my $debug = 1 if ($opt_d);
+print "Running debug mode; args:\n" if ($debug);
+map {print "\t$_\n"} @ARGV;
 
 # Get command line information
 my $showName = $ARGV[0];
@@ -47,18 +49,23 @@ my $baseURL = "$WEB_ROOT/$joinedName";
 my $showFileGrep = $showName;
 $showFileGrep =~ s/[ ]/./g;
 # Move it to the web directory
-my $showFile = `ls $RIP_DIR/$ripSubdir | grep -i "$showFileGrep"`;
+my $showFileCommand = "ls $RIP_DIR/$ripSubdir | grep -i '$showFileGrep' | head -1";
+my $showFile = `$showFileCommand`;
 chomp $showFile;
 # Die if the show isn't there
+print "showFileCommand: $showFileCommand\nshowFile: $showFile\n" if ($debug);
 die "$showName ($showFileGrep) not found in $RIP_DIR/$ripSubdir\n" if ($showFile eq '');
 
+# Create destination file name
 my $newFile = downcase($showFile);
 # Strip the streamripper numbers
 $newFile =~ s/00\d\d_//;
 
 # Move the show MP3 to the web directory
 mkdir($baseDir) unless (-d $baseDir);
-system "mv \"$RIP_DIR/$ripSubdir/$showFile\" \"$baseDir/$newFile\"";
+my $copyShowFileCommand = "cp \"$RIP_DIR/$ripSubdir/$showFile\" \"$baseDir/$newFile\"";
+print "copyShowFileCommand: $copyShowFileCommand\n" if ($debug);
+system $copyShowFileCommand;
 
 # Get the size
 my @stats = stat "$baseDir/$newFile";
