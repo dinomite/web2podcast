@@ -1,4 +1,4 @@
-#!/usr/bin/env perl
+#!/usr/local/bin/perl
 # Drew Stephens <drew@dinomite.net>
 # 2009-3-5
 #
@@ -7,6 +7,7 @@ use warnings;
 use strict;
 
 use DateTime;
+use Data::GUID;
 use Getopt::Std;
 use POSIX qw(strftime);
 
@@ -80,6 +81,7 @@ my $fileURL = "$baseURL/$newFile";
 $fileURL =~ s/'/&apos;/g;
 
 # Create the XML file
+my $guid = Data::GUID->new->as_string();
 my $xmlOutput =<< "EOT";
 <?xml version="1.0" encoding="UTF-8"?>
 <rss xmlns:itunes='http://www.itunes.com/dtds/podcast-1.0.dtd' version='2.0'>
@@ -92,7 +94,7 @@ my $xmlOutput =<< "EOT";
 
         <item>
             <title>$showName - $date</title>
-            <guid isPermaLink='false'>$fileURL</guid>
+            <guid isPermaLink='false'>$guid</guid>
             <enclosure url='$fileURL' type='audio/mpeg' length='$fileSize'/>
             <pubDate>$pubDate</pubDate>
             <itunes:category text="Music"/>
